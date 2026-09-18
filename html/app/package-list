@@ -1,0 +1,21 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.example.painlessprep////PointingToDeclaration/app/com.example.painlessprep/index.html
+$dokka.location:com.example.painlessprep/MainActivity///PointingToDeclaration/app/com.example.painlessprep/-main-activity/index.html
+$dokka.location:com.example.painlessprep/MainActivity/MainActivity/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/-main-activity.html
+$dokka.location:com.example.painlessprep/MainActivity/boardSize/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/board-size.html
+$dokka.location:com.example.painlessprep/MainActivity/calibSquareSize/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/calib-square-size.html
+$dokka.location:com.example.painlessprep/MainActivity/collectedImagePoints/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/collected-image-points.html
+$dokka.location:com.example.painlessprep/MainActivity/collectedObjectPoints/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/collected-object-points.html
+$dokka.location:com.example.painlessprep/MainActivity/isCalibrating/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/is-calibrating.html
+$dokka.location:com.example.painlessprep/MainActivity/isProcessingCalibration/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/is-processing-calibration.html
+$dokka.location:com.example.painlessprep/MainActivity/lastCaptureTime/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/last-capture-time.html
+$dokka.location:com.example.painlessprep/MainActivity/loadCalibration/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/load-calibration.html
+$dokka.location:com.example.painlessprep/MainActivity/onCameraFrame/#org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame/PointingToDeclaration/app/com.example.painlessprep/-main-activity/on-camera-frame.html
+$dokka.location:com.example.painlessprep/MainActivity/onCameraViewStarted/#kotlin.Int#kotlin.Int/PointingToDeclaration/app/com.example.painlessprep/-main-activity/on-camera-view-started.html
+$dokka.location:com.example.painlessprep/MainActivity/onCameraViewStopped/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/on-camera-view-stopped.html
+$dokka.location:com.example.painlessprep/MainActivity/onRequestPermissionsResult/#kotlin.Int#kotlin.Array[kotlin.String]#kotlin.IntArray/PointingToDeclaration/app/com.example.painlessprep/-main-activity/on-request-permissions-result.html
+$dokka.location:com.example.painlessprep/MainActivity/requiredFrames/#/PointingToDeclaration/app/com.example.painlessprep/-main-activity/required-frames.html
+$dokka.location:com.example.painlessprep/MainActivity/runCalibration/#org.opencv.core.Size/PointingToDeclaration/app/com.example.painlessprep/-main-activity/run-calibration.html
+$dokka.location:com.example.painlessprep/MainActivity/saveCalibration/#org.opencv.core.Mat#org.opencv.core.Mat/PointingToDeclaration/app/com.example.painlessprep/-main-activity/save-calibration.html
+com.example.painlessprep

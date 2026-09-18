@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Inner cutout (window pane) -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M28,28h52v52h-52z"/>
+
+    <!-- Vertical measurement line -->
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M54,28v52"/>
+
+    <!-- Horizontal measurement line -->
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M28,54h52"/>
+
+    <!-- Small corner markers -->
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M28,28h10M28,28v10"/>
+
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M80,28h-10M80,28v10"/>
+
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M28,80h10M28,80v-10"/>
+
+    <path
+        android:strokeColor="#FFFF"
+        android:strokeWidth="2"
+        android:pathData="M80,80h-10M80,80v-10"/>
+
+</vector>
