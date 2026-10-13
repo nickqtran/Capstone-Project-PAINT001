@@ -22,5 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "painlessprep"
 include(":app")
-
-include(":opencv")
