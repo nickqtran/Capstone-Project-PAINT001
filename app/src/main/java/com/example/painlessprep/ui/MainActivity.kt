@@ -2,6 +2,7 @@ package com.example.painlessprep.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Camera
 import android.os.Bundle
 import android.text.InputType
 import android.view.SurfaceView
@@ -11,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
     private val boardSize = Size(9.0, 6.0)
 
     // Used for calibration delay
+
     private var lastCaptureTime = 0L
 
     // Global distance measurements each frame
@@ -64,53 +67,47 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         super.onCreate(savedInstanceState)
 
         // Initialize OpenCV
-        if (!OpenCVLoader.initDebug()) {
+        if (!OpenCVLoader.initLocal()) {
             println("OpenCV failed to load")
         } else {
             println("OpenCV loaded successfully")
         }
 
-        dictionary = Objdetect.getPredefinedDictionary(Objdetect.DICT_4X4_50)
-        parameters = DetectorParameters()
-        arucoDetector = ArucoDetector(dictionary, parameters)
-
-        setContentView(R.layout.activity_main)
-
-        cameraView = findViewById(R.id.camera_view)
-        cameraView.visibility = SurfaceView.VISIBLE
-        cameraView.setCvCameraViewListener(this)
-
-        // Observe RMS display from ViewModel
-        viewModel.rmsDisplay.observe(this) { rms ->
-            updateRmsDisplay(rms)
+        setContent {
+            CameraScreen(
+                viewModel = viewModel,
+                onCalibrateClicked = { promptCalibration() },
+                onCaptureClicked = { captureMeasurement(viewModel.currentWidth , viewModel.currentHeight) },
+                onInfoClicked = { showInfoCard() },
+                cameraViewFactory = { context ->
+                    JavaCameraView(context, 0).apply {
+                        visibility = SurfaceView.VISIBLE
+                        setCvCameraViewListener(this@MainActivity)
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            setCameraPermissionGranted()
+                            enableView()
+                        }
+                    }.also { cameraView = it }
+                }
+            )
         }
 
-        // Check camera permission
+        checkCameraPermission()
+    }
+
+    private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1)
-        } else {
-            cameraView.setCameraPermissionGranted()
-            cameraView.enableView()
-        }
-
-        findViewById<Button>(R.id.btn_calibrate).setOnClickListener {
-            promptCalibration()
-        }
-
-        findViewById<Button>(R.id.btn_capture).setOnClickListener {
-            captureMeasurement(idWidth, idHeight)
-        }
-
-        findViewById<ImageButton>(R.id.btn_infocard).setOnClickListener {
-            showInfoCard()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (OpenCVLoader.initDebug()) {
+        if (OpenCVLoader.initLocal()) {
             cameraView.setCameraPermissionGranted()
             cameraView.enableView()
         }

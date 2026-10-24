@@ -22,6 +22,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val collectedImagePoints = mutableListOf<MatOfPoint2f>()
     val collectedObjectPoints = mutableListOf<MatOfPoint3f>()
 
+    // Track current live measurements
+    var currentWidth: Double = 0.0
+    var currentHeight: Double = 0.0
+
     var savedCalibration: CalibrationData? = calibrationRepo.loadCalibration()
         private set
 
