@@ -1,5 +1,6 @@
-package com.example.painlessprep
+package com.example.painlessprep.ui
 
+<<<<<<< HEAD:app/src/main/java/com/example/painlessprep/SignOnScreen.kt
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+=======
+>>>>>>> origin:app/src/main/java/com/example/painlessprep/ui/SignOnScreen.kt
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
