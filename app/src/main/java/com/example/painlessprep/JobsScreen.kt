@@ -77,6 +77,8 @@ fun JobsScreen() {
         it.name.contains(searchQuery, ignoreCase = true) ||
                 it.address.contains(searchQuery, ignoreCase = true)
     }
+
+    // filtering for draft/paid orders needs fixing
     val draftJobs = filteredJobs.filter { it.status == "Draft" }
     val orderedJobs = filteredJobs.filter { it.status == "Paid" }
 
