@@ -58,7 +58,7 @@ fun JobsScreen() {
             ),
             Job(
                 name = "House 2",
-                address = "123 A Street Omaha NE 68132",
+                address = "123 A Street Omaha NE 68116",
                 windows = 11,
                 status = "Draft",
                 estimate = "$[TOTAL]"
