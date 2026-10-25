@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         if (viewModel.isCalibrating && !viewModel.isProcessingCalibration) {
             if (currentTime - lastCvProcessTime >= cvProcessIntervalMs) {
                 lastCvProcessTime = currentTime
-                val corners = openCVProcessor.processCalibrationFrame(gray, rgba, boardSize, calibSquareSize)
+                val corners = openCVProcessor.processCalibrationFrame(gray, rgba, boardSize)
 
                 if (corners != null && currentTime - lastCaptureTime > 1000) {
                     lastCaptureTime = currentTime
@@ -257,9 +257,12 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         layout.addView(textEntry)
         layout.addView(intEntry)
 
+        val width32nds = openCVProcessor.decimalTo32nds(widthVal)
+        val height32nds = openCVProcessor.decimalTo32nds(heightVal)
+
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Measurement Details")
-            .setMessage("The following measurement data will be saved: \nWidth: $widthVal\nHeight: $heightVal\n")
+            .setMessage("The following measurement data will be saved: \nWidth: $width32nds ($widthVal)\nHeight: $height32nds ($heightVal)\n")
             .setView(layout)
             .setPositiveButton("Confirm") { _, _ ->
                 val name = textEntry.text.toString()

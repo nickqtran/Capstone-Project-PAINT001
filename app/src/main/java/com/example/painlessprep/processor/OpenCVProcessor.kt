@@ -43,7 +43,6 @@ class OpenCVProcessor {
         gray: Mat,
         rgba: Mat,
         boardSize: Size,
-        calibSquareSize: Double
     ): MatOfPoint2f? {
         val corners = MatOfPoint2f()
         val foundBoard = Calib3d.findChessboardCorners(
@@ -180,7 +179,7 @@ class OpenCVProcessor {
         return Pair(width, height)
     }
 
-    private fun decimalTo32nds(inches: Double): String {
+    fun decimalTo32nds(inches: Double): String {
         val wholeInches = inches.toInt()
         val remainder = inches - wholeInches
         val thirtySeconds = (remainder * 32).roundToInt()
