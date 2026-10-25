@@ -1,5 +1,6 @@
-package com.example.painlessprep
+package com.example.painlessprep.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -163,7 +165,7 @@ fun JobsScreen() {
                         onValueChange = { searchQuery = it },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        textStyle = androidx.compose.ui.text.TextStyle(
+                        textStyle = TextStyle(
                             color = TextColor,
                             fontSize = 16.sp
                         )
@@ -243,7 +245,7 @@ private fun JobCard(job: Job) {
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        border = androidx.compose.foundation.BorderStroke(
+        border = BorderStroke(
             1.dp,
             BorderColor
         )
@@ -338,6 +340,8 @@ private fun BottomNavigationBar() {
             .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
+
+        // bottom bar navigation
         NavigationItem("▦", "Jobs", true)
         NavigationItem("▱", "Orders", false)
         NavigationItem("♙", "Account", false)
