@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
 
     private fun showInfoCard() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("TEST: Using The App")
+        builder.setTitle("Using The App")
             .setMessage(
                 "Here is a step by step guide in using the application.\n\n" +
                         "Step 1) Calibrate your mobile camera by placing the provided chessboard in the frame...\n\n" +
