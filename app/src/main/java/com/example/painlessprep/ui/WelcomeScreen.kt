@@ -1,5 +1,6 @@
-package com.example.painlessprep
+package com.example.painlessprep.ui
 
+import com.example.painlessprep.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
