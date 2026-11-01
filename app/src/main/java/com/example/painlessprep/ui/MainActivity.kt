@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.painlessprep.model.WindowData
 import com.example.painlessprep.processor.OpenCVProcessor
+import com.example.painlessprep.processor.ProcessorInfo
 import com.example.painlessprep.viewmodel.MainViewModel
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.JavaCameraView
@@ -62,12 +63,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                     CameraScreen(
                         viewModel = viewModel,
                         onCalibrateClicked = { promptCalibration() },
-                        onCaptureClicked = {
-                            captureMeasurement(
-                                viewModel.currentWidth,
-                                viewModel.currentHeight
-                            )
-                        },
+                        onCaptureClicked = { captureMeasurement(viewModel.info.width, viewModel.info.height) },
                         onInfoClicked = { showInfoCard() },
                         cameraViewFactory = { context ->
                             JavaCameraView(context, 0).apply {
@@ -187,12 +183,8 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                 }
             }
         } else {
-            if (currentTime - lastCvProcessTime >= cvProcessIntervalMs) {
                 lastCvProcessTime = currentTime
-                val (width, height) = openCVProcessor.processArucoFrame(gray, rgba, cameraMatrix, distortionCoeffs)
-                viewModel.currentWidth = width
-                viewModel.currentHeight = height
-            }
+                viewModel.info = openCVProcessor.processArucoFrame(gray, rgba, cameraMatrix, distortionCoeffs)
         }
         return rgba
     }
