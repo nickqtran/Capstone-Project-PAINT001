@@ -8,6 +8,7 @@ import com.example.painlessprep.model.CalibrationData
 import com.example.painlessprep.model.WindowData
 import com.example.painlessprep.data.CalibrationRepository
 import com.example.painlessprep.data.MeasurementRepository
+import com.example.painlessprep.processor.ProcessorInfo
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint2f
 import org.opencv.core.MatOfPoint3f
@@ -18,6 +19,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var isCalibrating = false
     var isProcessingCalibration = false
+
+    var info: ProcessorInfo = object : ProcessorInfo {
+        override var currentWidth: String = ""
+        override var currentHeight: String = ""
+        override var squareConfidence: Double = 0.0
+        override var markerConfidence: Map<Int, Double> = emptyMap()
+    }
 
     val collectedImagePoints = mutableListOf<MatOfPoint2f>()
     val collectedObjectPoints = mutableListOf<MatOfPoint3f>()

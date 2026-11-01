@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.painlessprep.model.WindowData
 import com.example.painlessprep.processor.OpenCVProcessor
+import com.example.painlessprep.processor.ProcessorInfo
 import com.example.painlessprep.viewmodel.MainViewModel
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.JavaCameraView
@@ -36,6 +37,8 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
     private var lastCvProcessTime = 0L
     private val cvProcessIntervalMs = 66L // ~15fps CV throttling
 
+    private var isDialogOpen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,7 +52,8 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
             CameraScreen(
                 viewModel = viewModel,
                 onCalibrateClicked = { promptCalibration() },
-                onCaptureClicked = { captureMeasurement(viewModel.currentWidth, viewModel.currentHeight) },
+                onCaptureClicked = { promptData(viewModel.info) },
+//                onCaptureClicked = { captureMeasurement(viewModel.currentWidth, viewModel.currentHeight) },
                 onInfoClicked = { showInfoCard() },
                 cameraViewFactory = { context ->
                     JavaCameraView(context, 0).apply {
@@ -164,12 +168,14 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                 }
             }
         } else {
-            if (currentTime - lastCvProcessTime >= cvProcessIntervalMs) {
+//            if (currentTime - lastCvProcessTime >= cvProcessIntervalMs) {
                 lastCvProcessTime = currentTime
-                val (width, height) = openCVProcessor.processArucoFrame(gray, rgba, cameraMatrix, distortionCoeffs)
-                viewModel.currentWidth = width
-                viewModel.currentHeight = height
-            }
+                val tmpData = openCVProcessor.processArucoFrame(gray, rgba, cameraMatrix, distortionCoeffs)
+                viewModel.info = tmpData
+//                promptData(tmpData)
+//                viewModel.currentWidth = width
+//                viewModel.currentHeight = height
+//            }
         }
         return rgba
     }
@@ -199,6 +205,26 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
 
         viewModel.saveNewCalibration(cameraMatrix, distortionCoeffs, rms)
         viewModel.isProcessingCalibration = false
+    }
+
+    private fun promptData(info: ProcessorInfo) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("OpenCV data")
+            .setMessage(
+                "Width: ${info.currentWidth}\n" +
+                        "Height: ${info.currentHeight}\n" +
+                        "Square Confidence: ${info.squareConfidence}\n" +
+                        "Marker Confidence: ${info.markerConfidence}"
+            ).setPositiveButton("OK"){
+                dialog, _ ->
+                isDialogOpen = false
+                dialog.dismiss()
+            }
+
+        val dialog = builder.create()
+
+        isDialogOpen = true
+        dialog.show()
     }
 
     private fun promptCalibration() {
