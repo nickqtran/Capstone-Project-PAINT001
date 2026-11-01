@@ -1,7 +1,8 @@
-package com.example.painlessprep
+package com.example.painlessprep.processor
 
-import java.io.File
 import android.content.Context
+import com.example.painlessprep.model.WindowData
+import java.io.File
 
 /**
  * An object class meant for helping with csv formatting and whatnot.
