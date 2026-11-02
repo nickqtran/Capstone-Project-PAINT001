@@ -48,9 +48,15 @@ private data class Job(
 fun JobsScreen() {
     var searchQuery by remember { mutableStateOf("") }
 
+    // creates the dialog for "measure a house"
+    var showCreateProjectDialog by remember { mutableStateOf(false)}
+
+    // stores the new house name
+    var newProjectName by remember {mutableStateOf("")}
+    
     // placeholder variables to test UI
     val jobs = remember {
-        listOf(
+        mutableStateListOf(
             Job(
                 name = "House 1",
                 address = "123 A Street Omaha NE 68132",
@@ -205,7 +211,10 @@ fun JobsScreen() {
         }
 
         Button(
-            onClick = { },
+            onClick = {
+                newProjectName = ""
+                showCreateProjectDialog = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -224,7 +233,71 @@ fun JobsScreen() {
 
         BottomNavigationBar()
     }
+
+    // measure a house dialog
+    if (showCreateProjectDialog) {
+        AlertDialog(
+            onDismissRequest = { showCreateProjectDialog = false },
+            title = {
+                Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Create New Project",
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(
+                        onClick = {
+                            showCreateProjectDialog = false
+                        }
+                    ) {
+                        Text(
+                            text = "✕",
+                            fontSize = 22.sp,
+                            color = SecondaryColor
+                        )
+                    }
+                }
+            },
+            text = {
+                OutlinedTextField(
+                    value = newProjectName,
+                    onValueChange = { newProjectName = it },
+                    label = { Text("Project Name") },
+                    placeholder = { Text("e.g Smith's House (large blue house)") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val name = newProjectName.trim()
+
+                        if (name.isNotEmpty()) {
+                            jobs.add(
+                                Job(
+                                    name = name,
+                                    windows = 0,
+                                    status = "Draft"
+                                )
+                            )
+
+                            searchQuery = ""
+                            newProjectName = ""
+                            showCreateProjectDialog = false
+                        }
+                    },
+                    enabled = newProjectName.isNotBlank()
+                ) {
+                    Text("Create", color = PrimaryColor)
+                }
+            },
+        )
+    }
 }
+
 
 @Composable
 private fun SectionTitle(title: String) {
