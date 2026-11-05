@@ -1,15 +1,21 @@
 package com.example.painlessprep.ui
 
 import android.R.attr.bottom
+import android.icu.util.Calendar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -25,7 +31,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
@@ -43,16 +51,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.painlessprep.ui.theme.Background
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.SelectableDates
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.transition.Visibility
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 enum class AccountType {HOMEOWNER, BUSINESS}
 
@@ -61,6 +82,7 @@ enum class AccountType {HOMEOWNER, BUSINESS}
 data class SignupForm(
     val name: String,
     val email: String,
+    val phone: String,
     val address: String,
     val password: String,
     val businessName: String = "",
@@ -73,34 +95,72 @@ fun SignupScreen(
     accountType: AccountType,
     onSignupClick: (SignupForm) -> Unit
 ) {
-    var name by remember {mutableStateOf("")}
-    var email by remember {mutableStateOf("")}
-    var businessName by remember {mutableStateOf("")}
-    var address by remember {mutableStateOf("")}
-    var businessAddress by remember {mutableStateOf("")}
-    var dateOfBirth by remember {mutableStateOf("")}
-    var password by remember {mutableStateOf("")}
-    var confirmPassword by remember {mutableStateOf("")}
-    var passwordVisible by remember {mutableStateOf(false)}
-    var confirmPasswordVisible by remember {mutableStateOf(false)}
+    var name by rememberSaveable{mutableStateOf("")}
+    var phone by rememberSaveable{mutableStateOf("")}
+    var email by rememberSaveable{mutableStateOf("")}
+    var businessName by rememberSaveable{mutableStateOf("")}
+    var address by rememberSaveable{mutableStateOf("")}
+    var businessAddress by rememberSaveable{mutableStateOf("")}
+    var dobMillis by rememberSaveable{ mutableStateOf<Long?>(null)}
+    var showDobPicker by rememberSaveable{ mutableStateOf(false)}
+    var password by rememberSaveable{mutableStateOf("")}
+    var confirmPassword by rememberSaveable{mutableStateOf("")}
+    var passwordVisible by rememberSaveable {mutableStateOf(false)}
+    var confirmPasswordVisible by rememberSaveable {mutableStateOf(false)}
 
 
     val isHomeowner = accountType == AccountType.HOMEOWNER
+    val dobDisplay = formatDate(dobMillis, "MM/dd/yyyy")
     val passwordsMatch = password == confirmPassword
     val showPasswordError = confirmPassword.isNotEmpty() && !passwordsMatch
+    val phoneError = phone.isNotEmpty() && phone.length != 10
+    val emailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
+    val emailError = email.isNotEmpty() && !emailValid
 
-    val canSubmit = name.isNotBlank() &&
-            email.isNotBlank() &&
-            address.isNotBlank() &&
-            password.isNotBlank() &&
+    /*Password rules, change after getting backend confirmation*/
+    val hasMinLength = password.length >= 8
+    val hasUppercase = password.any(Char::isUpperCase)
+    val hasDigit = password.any(Char::isDigit)
+    val passwordValid = hasMinLength && hasUppercase && hasDigit
+
+    val canSubmit = emailValid &&
+            passwordValid &&
             passwordsMatch &&
+            phone.length == 10 &&
             if (isHomeowner) {
-                dateOfBirth.isNotBlank()
+                name.isNotBlank() && dobMillis != null && address.isNotBlank()
             } else {
                 businessName.isNotBlank() && businessAddress.isNotBlank()
             }
 
-
+    /*Dialogue box for the date*/
+    if(showDobPicker){
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = dobMillis,
+            initialDisplayMode = DisplayMode.Input,
+            yearRange = 1900..Calendar.getInstance().get(Calendar.YEAR),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    return utcTimeMillis <= System.currentTimeMillis()
+                }
+            }
+        )
+        DatePickerDialog(onDismissRequest = {showDobPicker = false},
+            confirmButton = {
+                TextButton(
+                    enabled = datePickerState.selectedDateMillis != null,
+                    onClick = {
+                        dobMillis = datePickerState.selectedDateMillis
+                        showDobPicker = false
+                    }
+                ) { Text("OK")}
+            },
+            dismissButton = {
+                TextButton(onClick = {showDobPicker = false}) {Text("Cancel")}
+            }) {
+            DatePicker(state = datePickerState, showModeToggle = false)
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,18 +182,18 @@ fun SignupScreen(
                 text = "Create Homeowner Account",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.primary
             )
         } else{
             Text(
                 text = "Create Business Account",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.primary
             )
         }
         Spacer(Modifier.height(5.dp))
-
+        /*Name field*/
         if(isHomeowner) {
             OutlinedTextField(
                 value = name,
@@ -163,7 +223,7 @@ fun SignupScreen(
                 modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
             )
         }
-
+        /*Email field*/
         OutlinedTextField(
             value = email,
             onValueChange = {email = it},
@@ -175,8 +235,32 @@ fun SignupScreen(
                 unfocusedBorderColor = MaterialTheme.colorScheme.onBackground
             ),
             singleLine = true,
+            isError = emailError,
+            supportingText = if (emailError){
+                {Text("Enter a valid email address")}
+            } else null,
             modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
         )
+        /*Phone number field*/
+        OutlinedTextField(
+            value = phone,
+            onValueChange = {phone = it.filter(Char::isDigit).take(10)},
+            placeholder = { Text("Phone Number", color = MaterialTheme.colorScheme.onBackground)},
+            leadingIcon = {Icon(Icons.Default.Smartphone, contentDescription = null)},
+            shape = RoundedCornerShape(size = 16.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onBackground
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            isError = phoneError,
+            supportingText = if (phoneError){
+                {Text("Enter a valid phone number")}
+            } else null,
+            modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
+        )
+        /*Address field*/
         if(isHomeowner) {
             OutlinedTextField(
                 value = address,
@@ -206,21 +290,32 @@ fun SignupScreen(
                 modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
             )
         }
+        /*Date of birth field*/
         if(isHomeowner) {
-            OutlinedTextField(
-                value = dateOfBirth,
-                onValueChange = { dateOfBirth = it },
-                placeholder = { Text("MM/DD/YYYY", color = MaterialTheme.colorScheme.onBackground) },
-                leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
-            )
+            Box(Modifier.fillMaxWidth()){
+                OutlinedTextField(
+                    value = dobDisplay,
+                    onValueChange = {},
+                    readOnly = true,
+                    placeholder = { Text("MM/DD/YYYY", color = MaterialTheme.colorScheme.onBackground) },
+                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                    shape = RoundedCornerShape(size = 16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
+                )
+                Box(
+                    Modifier
+                        .matchParentSize()
+                        .clickable(onClickLabel = "Pick date of birth") {showDobPicker = true}
+
+                )
+            }
         }
+        /*Password fields*/
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -246,7 +341,13 @@ fun SignupScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
         )
-
+        if (password.isNotEmpty()){
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)){
+                PasswordRule("Must have at least 8 characters",hasMinLength)
+                PasswordRule("Must have at least one uppercase letter",hasUppercase)
+                PasswordRule("Must have at least one number",hasDigit)
+            }
+        }
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
@@ -276,17 +377,19 @@ fun SignupScreen(
             },
             modifier = Modifier.fillMaxWidth().padding(bottom = (10.dp))
         )
+        /*Sign up button*/
         Button(
             onClick = {
                 onSignupClick(
                     SignupForm(
                         name = name.trim(),
                         email = email.trim(),
+                        phone = phone.trim(),
                         address = address.trim(),
                         password = password,
                         businessAddress = if (isHomeowner) "" else businessAddress.trim(),
                         businessName = if (isHomeowner) "" else businessName.trim(),
-                        dateOfBirth = if (isHomeowner) dateOfBirth.trim() else ""
+                        dateOfBirth = if (isHomeowner) formatDate(dobMillis,"yyyy-MM-dd") else ""
                     )
                 )
             },
@@ -320,12 +423,37 @@ private fun VisibilityToggle(
         )
     }
 }
+@Composable
+private fun PasswordRule(text: String, met: Boolean){
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Icon(
+            imageVector = if (met) Icons.Default.CheckCircle else Icons.Default.Cancel,
+            contentDescription = if (met) "Requirement met" else "Requirement not met",
+            tint = if (met) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = text,
+            color = if (met) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+/*Function to format date*/
+private fun formatDate(millis: Long?, pattern: String): String{
+    if (millis == null) return ""
+    val formatter = SimpleDateFormat(pattern, Locale.US)
+    formatter.timeZone = TimeZone.getTimeZone("UTC")
+    return formatter.format(Date(millis))
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun HomeOwnerPreview(){
     PainlessPrepTheme {
         Surface{
-            SignupScreen(accountType = AccountType.HOMEOWNER, onSignupClick = {})
+            SignupScreen(accountType = AccountType.BUSINESS, onSignupClick = {})
         }
     }
 }
