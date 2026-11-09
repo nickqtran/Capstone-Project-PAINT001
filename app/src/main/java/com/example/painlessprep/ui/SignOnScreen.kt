@@ -35,9 +35,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.example.painlessprep.R
 
-@Preview(showBackground = true)
 @Composable
-fun SignInScreen(){
+fun SignInScreen(
+    onSignIn: () -> Unit = {},
+    onCreateAccount: () -> Unit = {},
+    onMeasureFirst: () -> Unit = {},
+){
     var email by remember{
         mutableStateOf("")
     }
@@ -109,7 +112,7 @@ fun SignInScreen(){
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
-                onClick = {/*TODO:Handle Button Logic*/},
+                onClick = onSignIn,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth().height(64.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -125,7 +128,7 @@ fun SignInScreen(){
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedButton(onClick = {/*TODO:Handle Button Logic*/},
+            OutlinedButton(onClick = onCreateAccount,
                 shape = RoundedCornerShape(size = 16.dp),
                 modifier = Modifier.fillMaxWidth().height(64.dp),
                 border = BorderStroke(2.dp,Color.Black)){
@@ -137,7 +140,12 @@ fun SignInScreen(){
 
             Text(
                 text = "Measure First, sign in at checkout", textDecoration = TextDecoration.Underline,
-                modifier = Modifier.fillMaxWidth().clickable{/*TODO:Handle Button Logic*/},textAlign = TextAlign.Center)
+                modifier = Modifier.fillMaxWidth().clickable{onMeasureFirst()},textAlign = TextAlign.Center)
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+private fun SignInScreenPreview() {
+    SignInScreen()
 }

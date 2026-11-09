@@ -45,7 +45,7 @@ private data class Job(
 )
 
 @Composable
-fun JobsScreen() {
+fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
     var searchQuery by remember { mutableStateOf("") }
 
     // placeholder variables to test UI
@@ -205,7 +205,7 @@ fun JobsScreen() {
         }
 
         Button(
-            onClick = { },
+            onClick = onMeasureHouse,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
