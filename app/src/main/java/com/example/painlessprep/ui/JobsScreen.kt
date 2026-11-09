@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// milestone 2 to do: implement create house functionality
-// sponsor wants house name customization
+// milestone 3 to do: connect to database (waiting on db)
+// add room creation within project/house
 private val BackgroundColor = Color(0xFFF6F5F1)
 private val PrimaryColor = Color(0xFF0B5D75)
 private val TextColor = Color(0xFF202124)
@@ -54,7 +54,7 @@ fun JobsScreen() {
     // stores the new house name
     var newProjectName by remember {mutableStateOf("")}
     
-    // placeholder variables to test UI
+    // placeholder variables to test UI appearance
     val jobs = remember {
         mutableStateListOf(
             Job(
@@ -86,7 +86,7 @@ fun JobsScreen() {
                 it.address.contains(searchQuery, ignoreCase = true)
     }
 
-    // filtering for draft/paid orders needs fixing
+    // separates draft and paid jobs into categories
     val draftJobs = filteredJobs.filter { it.status == "Draft" }
     val orderedJobs = filteredJobs.filter { it.status == "Paid" }
 
@@ -114,6 +114,7 @@ fun JobsScreen() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
+                        // header
                         Text(
                             text = "PAINLESS PREP",
                             color = PrimaryColor,
@@ -158,6 +159,7 @@ fun JobsScreen() {
                         )
                         .padding(17.dp)
                 ) {
+                    // search bar
                     if (searchQuery.isEmpty()) {
                         Text(
                             "Search jobs or addresses",
@@ -210,6 +212,7 @@ fun JobsScreen() {
             }
         }
 
+        // create house button
         Button(
             onClick = {
                 newProjectName = ""
@@ -274,7 +277,6 @@ fun JobsScreen() {
                 TextButton(
                     onClick = {
                         val name = newProjectName.trim()
-
                         if (name.isNotEmpty()) {
                             jobs.add(
                                 Job(
@@ -297,8 +299,6 @@ fun JobsScreen() {
         )
     }
 }
-
-
 @Composable
 private fun SectionTitle(title: String) {
     Text(
@@ -309,7 +309,6 @@ private fun SectionTitle(title: String) {
         modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
     )
 }
-
 @Composable
 private fun JobCard(job: Job) {
     Card(
@@ -335,7 +334,7 @@ private fun JobCard(job: Job) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = job.name,
+                    text = job.name,    // project name
                     color = TextColor,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -346,7 +345,7 @@ private fun JobCard(job: Job) {
 
             if (job.address.isNotEmpty()) {
                 Text(
-                    text = job.address,
+                    text = job.address,     // project address
                     color = SecondaryColor,
                     fontSize = 15.sp,
                     maxLines = 2,
@@ -414,7 +413,7 @@ private fun BottomNavigationBar() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
-        // bottom bar navigation
+        // bottom bar navigation (no functionality yet)
         NavigationItem("▦", "Jobs", true)
         NavigationItem("▱", "Orders", false)
         NavigationItem("♙", "Account", false)
