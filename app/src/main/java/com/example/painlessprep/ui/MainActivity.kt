@@ -10,6 +10,9 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import com.example.painlessprep.navigation.AppNavHost
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -46,31 +49,51 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         }
 
         setContent {
-            CameraScreen(
-                viewModel = viewModel,
-                onCalibrateClicked = { promptCalibration() },
-                onCaptureClicked = { captureMeasurement(viewModel.currentWidth, viewModel.currentHeight) },
-                onInfoClicked = { showInfoCard() },
-                cameraViewFactory = { context ->
-                    JavaCameraView(context, 0).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        visibility = SurfaceView.VISIBLE
-                        setCvCameraViewListener(this@MainActivity)
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            setCameraPermissionGranted()
-                            enableView()
+            AppNavHost(
+                cameraContent = {
+                    LaunchedEffect(Unit) { checkCameraPermission() }
+
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            cameraView?.disableView()
+                            cameraView = null
                         }
-                    }.also { cameraView = it }
+                    }
+                    CameraScreen(
+                        viewModel = viewModel,
+                        onCalibrateClicked = { promptCalibration() },
+                        onCaptureClicked = {
+                            captureMeasurement(
+                                viewModel.currentWidth,
+                                viewModel.currentHeight
+                            )
+                        },
+                        onInfoClicked = { showInfoCard() },
+                        cameraViewFactory = { context ->
+                            JavaCameraView(context, 0).apply {
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                )
+                                visibility = SurfaceView.VISIBLE
+                                setCvCameraViewListener(this@MainActivity)
+                                if (ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.CAMERA
+                                    )
+                                    == PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    setCameraPermissionGranted()
+                                    enableView()
+                                }
+                            }.also { cameraView = it }
+                        }
+                    )
                 }
             )
         }
 
-        checkCameraPermission()
+        //checkCameraPermission()
     }
 
     private fun checkCameraPermission() {
