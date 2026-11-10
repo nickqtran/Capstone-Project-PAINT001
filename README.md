@@ -14,7 +14,7 @@ We decided to work on the UI elements while refactoring the code because it was 
 -Improved Jobs screen according to what the sponsor wanted<br/>
 -Added Navigation between screens<br/>
 </br>
-Other Branches reviewer should checkout: **determine-confidence-of-caputre**</br>
+Other Branches reviewer should checkout: **determine-confidence-of-capture**</br>
 What this branch does is it gives a confidence value that lets users know their Aruco markers are being detected correctly. It will change colors depending on the confidence value/placement of the aruco markers.
 # Group Members
 Ian Hundahl<br/>
