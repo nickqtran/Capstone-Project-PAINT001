@@ -45,7 +45,7 @@ private data class Job(
 )
 
 @Composable
-fun JobsScreen() {
+fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
     var searchQuery by remember { mutableStateOf("") }
 
     // creates the dialog for "measure a house"
@@ -289,6 +289,7 @@ fun JobsScreen() {
                             searchQuery = ""
                             newProjectName = ""
                             showCreateProjectDialog = false
+                            onMeasureHouse()
                         }
                     },
                     enabled = newProjectName.isNotBlank()
