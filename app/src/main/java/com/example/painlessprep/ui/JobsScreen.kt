@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// milestone 2 to do: implement create house functionality
-// sponsor wants house name customization
+// milestone 3 to do: connect to database (waiting on db)
+// add room creation within project/house
 private val BackgroundColor = Color(0xFFF6F5F1)
 private val PrimaryColor = Color(0xFF0B5D75)
 private val TextColor = Color(0xFF202124)
@@ -45,12 +45,18 @@ private data class Job(
 )
 
 @Composable
-fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
+fun JobsScreen() {
     var searchQuery by remember { mutableStateOf("") }
 
-    // placeholder variables to test UI
+    // creates the dialog for "measure a house"
+    var showCreateProjectDialog by remember { mutableStateOf(false)}
+
+    // stores the new house name
+    var newProjectName by remember {mutableStateOf("")}
+    
+    // placeholder variables to test UI appearance
     val jobs = remember {
-        listOf(
+        mutableStateListOf(
             Job(
                 name = "House 1",
                 address = "123 A Street Omaha NE 68132",
@@ -80,7 +86,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                 it.address.contains(searchQuery, ignoreCase = true)
     }
 
-    // filtering for draft/paid orders needs fixing
+    // separates draft and paid jobs into categories
     val draftJobs = filteredJobs.filter { it.status == "Draft" }
     val orderedJobs = filteredJobs.filter { it.status == "Paid" }
 
@@ -108,6 +114,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
+                        // header
                         Text(
                             text = "PAINLESS PREP",
                             color = PrimaryColor,
@@ -152,6 +159,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                         )
                         .padding(17.dp)
                 ) {
+                    // search bar
                     if (searchQuery.isEmpty()) {
                         Text(
                             "Search jobs or addresses",
@@ -204,8 +212,12 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
             }
         }
 
+        // create house button
         Button(
-            onClick = onMeasureHouse,
+            onClick = {
+                newProjectName = ""
+                showCreateProjectDialog = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -224,8 +236,69 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
 
         BottomNavigationBar()
     }
-}
 
+    // measure a house dialog
+    if (showCreateProjectDialog) {
+        AlertDialog(
+            onDismissRequest = { showCreateProjectDialog = false },
+            title = {
+                Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Create New Project",
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(
+                        onClick = {
+                            showCreateProjectDialog = false
+                        }
+                    ) {
+                        Text(
+                            text = "✕",
+                            fontSize = 22.sp,
+                            color = SecondaryColor
+                        )
+                    }
+                }
+            },
+            text = {
+                OutlinedTextField(
+                    value = newProjectName,
+                    onValueChange = { newProjectName = it },
+                    label = { Text("Project Name") },
+                    placeholder = { Text("e.g Smith's House (large blue house)") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val name = newProjectName.trim()
+                        if (name.isNotEmpty()) {
+                            jobs.add(
+                                Job(
+                                    name = name,
+                                    windows = 0,
+                                    status = "Draft"
+                                )
+                            )
+
+                            searchQuery = ""
+                            newProjectName = ""
+                            showCreateProjectDialog = false
+                        }
+                    },
+                    enabled = newProjectName.isNotBlank()
+                ) {
+                    Text("Create", color = PrimaryColor)
+                }
+            },
+        )
+    }
+}
 @Composable
 private fun SectionTitle(title: String) {
     Text(
@@ -236,7 +309,6 @@ private fun SectionTitle(title: String) {
         modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
     )
 }
-
 @Composable
 private fun JobCard(job: Job) {
     Card(
@@ -262,7 +334,7 @@ private fun JobCard(job: Job) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = job.name,
+                    text = job.name,    // project name
                     color = TextColor,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -273,7 +345,7 @@ private fun JobCard(job: Job) {
 
             if (job.address.isNotEmpty()) {
                 Text(
-                    text = job.address,
+                    text = job.address,     // project address
                     color = SecondaryColor,
                     fontSize = 15.sp,
                     maxLines = 2,
@@ -341,7 +413,7 @@ private fun BottomNavigationBar() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
-        // bottom bar navigation
+        // bottom bar navigation (no functionality yet)
         NavigationItem("▦", "Jobs", true)
         NavigationItem("▱", "Orders", false)
         NavigationItem("♙", "Account", false)
