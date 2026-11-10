@@ -6,4 +6,5 @@ object Routes {
     const val SIGN_IN = "sign_in"
     const val JOBS = "jobs"
     const val CAMERA = "camera"
+    const val SIGN_UP = "sign_up"
 }
