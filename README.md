@@ -7,7 +7,12 @@
 -Welcome screen created<br/>
 -Sign in screen created<br/>
 -Jobs Screen created<br/>
-We decided to work on the UI elements while refactoring the code because it was one of the sponsor's main focus and we wanted to get screens ready for future milestones.
+We decided to work on the UI elements while refactoring the code because it was one of the sponsor's main focus and we wanted to get screens ready for future milestones.</br>
+# Milestone 2 Release Notes
+-Improved the Camera UI surrounding the aruco markers<br/>
+-Created a Sign up page<br/>
+-Improved Jobs screen according to what the sponsor wanted<br/>
+-Added Navigation between screens<br/>
 # Group Members
 Ian Hundahl<br/>
 Thomas Nguyen<br/>
