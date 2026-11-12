@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,9 +16,10 @@ import com.example.painlessprep.ui.SignupScreen
 import com.example.painlessprep.ui.UserType
 import com.example.painlessprep.ui.WelcomeScreen
 import com.example.painlessprep.ui.theme.PainlessPrepTheme
+import com.example.painlessprep.viewmodel.DatabaseViewModel
 
 @Composable
-fun AppNavHost(cameraContent: @Composable () -> Unit) {
+fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composable () -> Unit) {
     val navController = rememberNavController()
 
     // remembers what the user picked on the Welcome screen (null = not picked yet)
