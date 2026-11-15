@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
     id("org.jetbrains.dokka")
 }
 
 android {
+    testOptions {unitTests {isIncludeAndroidResources = true}}
     buildFeatures { compose = true }
     namespace = "com.example.painlessprep"
     compileSdk {
@@ -66,7 +68,18 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     debugImplementation(libs.androidx.ui.tooling)
+    testImplementation("androidx.test:core-ktx:1.6.1")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+}
+ksp{
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 tasks.dokkaHtml {
