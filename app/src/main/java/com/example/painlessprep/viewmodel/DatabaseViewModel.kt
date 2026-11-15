@@ -10,9 +10,9 @@ class DatabaseViewModel (application: Application) : AndroidViewModel(applicatio
     private val DatabaseRepo = DatabaseRepository(AppDatabase.get(application))
 
     //Delete this init block when done with sample data
-    init {
-        viewModelScope.launch { DatabaseRepo.sampleData() }
-    }
+    // init {
+    //     viewModelScope.launch { DatabaseRepo.sampleData() }
+    // }
 
     //Read operations
     val housesWithRooms = DatabaseRepo.housesWithRooms
