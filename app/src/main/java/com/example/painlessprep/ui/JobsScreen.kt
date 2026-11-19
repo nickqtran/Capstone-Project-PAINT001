@@ -1,5 +1,9 @@
 package com.example.painlessprep.ui
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.painlessprep.viewmodel.DatabaseViewModel
+import com.example.painlessprep.data.HouseWithRooms
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +40,7 @@ private val SecondaryColor = Color(0xFF60666F)
 private val BorderColor = Color(0xFFE2E0D8)
 
 private data class Job(
+    val id: Int,
     val name: String,
     val address: String = "",
     val windows: Int,
@@ -45,8 +50,12 @@ private data class Job(
 )
 
 @Composable
-fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
+fun JobsScreen(onMeasureHouse: () -> Unit = {}, onProjectClick: (Int) -> Unit = {}, databaseViewModel: DatabaseViewModel = viewModel()) {
     var searchQuery by remember { mutableStateOf("") }
+
+    val housesState = databaseViewModel.housesWithRooms
+        .collectAsState(initial = emptyList())
+    val houses = housesState.value
 
     // creates the dialog for "measure a house"
     var showCreateProjectDialog by remember { mutableStateOf(false)}
@@ -54,31 +63,13 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
     // stores the new house name
     var newProjectName by remember {mutableStateOf("")}
     
-    // placeholder variables to test UI appearance
-    val jobs = remember {
-        mutableStateListOf(
-            Job(
-                name = "House 1",
-                address = "123 A Street Omaha NE 68132",
-                windows = 4,
-                status = "Draft",
-                estimate = "$[TOTAL]"
-            ),
-            Job(
-                name = "House 2",
-                address = "123 A Street Omaha NE 68116",
-                windows = 11,
-                status = "Draft",
-                estimate = "$[TOTAL]"
-            ),
-            Job(
-                name = "House 3",
-                windows = 6,
-                status = "Paid",
-                shipping = "Shipped\nArriving October 13"
-            )
-        )
-    }
+    val jobs = houses.map { houseWithRooms -> Job(
+            id = houseWithRooms.house.id,
+            name = houseWithRooms.house.name,
+            address = houseWithRooms.house.address,
+            windows = houseWithRooms.rooms.sumOf { room -> room.windows.size},
+            status = "Draft"
+    )}
 
     // filter through jobs based on status, name, and address
     val filteredJobs = jobs.filter {
@@ -187,7 +178,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                 }
 
                 items(draftJobs) { job ->
-                    JobCard(job)
+                    JobCard(job, onClick = { onProjectClick(job.id) })
                 }
             }
 
@@ -197,7 +188,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                 }
 
                 items(orderedJobs) { job ->
-                    JobCard(job)
+                    JobCard(job, onClick = { onProjectClick(job.id) })
                 }
             }
 
@@ -228,7 +219,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
             )
         ) {
             Text(
-                "⊞  Measure a House",
+                "⊞  Create a Project",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -278,18 +269,14 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}) {
                     onClick = {
                         val name = newProjectName.trim()
                         if (name.isNotEmpty()) {
-                            jobs.add(
-                                Job(
-                                    name = name,
-                                    windows = 0,
-                                    status = "Draft"
-                                )
+                            databaseViewModel.addHouse(
+                                name = name,
+                                address = ""
                             )
 
                             searchQuery = ""
                             newProjectName = ""
                             showCreateProjectDialog = false
-                            onMeasureHouse()
                         }
                     },
                     enabled = newProjectName.isNotBlank()
@@ -311,8 +298,9 @@ private fun SectionTitle(title: String) {
     )
 }
 @Composable
-private fun JobCard(job: Job) {
+private fun JobCard(job: Job, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
