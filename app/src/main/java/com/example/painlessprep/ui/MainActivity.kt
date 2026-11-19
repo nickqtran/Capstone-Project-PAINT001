@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
 
         setContent {
             AppNavHost(
-                cameraContent = {
+                cameraContent = { onBackClicked ->
                     LaunchedEffect(Unit) { checkCameraPermission() }
 
                     DisposableEffect(Unit) {
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                     }
                     CameraScreen(
                         viewModel = viewModel,
+                        onBackClicked = onBackClicked,
                         onCalibrateClicked = { promptCalibration() },
                         onCaptureClicked = { captureMeasurement(viewModel.info.width, viewModel.info.height) },
                         onInfoClicked = { showInfoCard() },
