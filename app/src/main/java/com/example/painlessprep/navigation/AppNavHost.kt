@@ -9,6 +9,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.painlessprep.ui.ProjectDetailsScreen
 import com.example.painlessprep.ui.AccountType
 import com.example.painlessprep.ui.JobsScreen
 import com.example.painlessprep.ui.SignInScreen
@@ -70,7 +73,40 @@ fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composab
         }
 
         composable(Routes.JOBS) {
-            JobsScreen(onMeasureHouse = { navController.navigate(Routes.CAMERA) })
+            JobsScreen(
+                databaseViewModel = dataVm,
+                onProjectClick = {houseId -> navController.navigate(Routes.projectDetails(houseId))
+                }, onMeasureHouse = {
+                    navController.navigate(Routes.CAMERA)
+                }
+            )
+        }
+
+        composable(
+            route = Routes.PROJECT_DETAILS,
+            arguments = listOf(
+                navArgument("houseId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+
+            val houseId = backStackEntry.arguments
+                ?.getInt("houseId") ?: return@composable
+
+            ProjectDetailsScreen(
+                houseId = houseId,
+                databaseViewModel = dataVm,
+                // navigate back to JobsScreen
+                onBack = {
+                    navController.navigate(Routes.JOBS) {
+                        popUpTo(Routes.JOBS) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(Routes.CAMERA) {
