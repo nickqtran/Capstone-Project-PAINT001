@@ -219,7 +219,7 @@ fun JobsScreen(onMeasureHouse: () -> Unit = {}, onProjectClick: (Int) -> Unit = 
             )
         ) {
             Text(
-                "⊞  Measure a House",
+                "⊞  Create a Project",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
