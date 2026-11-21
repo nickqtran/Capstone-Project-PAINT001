@@ -2,6 +2,8 @@ package com.example.painlessprep.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -19,6 +21,7 @@ import com.example.painlessprep.R
 @Composable
 fun CameraScreen(
     viewModel: MainViewModel,
+    onBackClicked: () -> Unit = {},
     onCalibrateClicked: () -> Unit,
     onCaptureClicked: () -> Unit,
     onInfoClicked: () -> Unit,
@@ -33,11 +36,24 @@ fun CameraScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black.copy(alpha = 0.6f)
                 ),
+                navigationIcon = {
+                    IconButton(onClick = onBackClicked) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
                 actions = {
                     IconButton(
                         onClick = onInfoClicked,
                     ) {
-                        Icon(painter = painterResource(id = R.drawable.info_24px), contentDescription = "Info")
+                        Icon(
+                            painter = painterResource(id = R.drawable.info_24px),
+                            contentDescription = "Info",
+                            tint = Color.White
+                        )
                     }
 
                 }
