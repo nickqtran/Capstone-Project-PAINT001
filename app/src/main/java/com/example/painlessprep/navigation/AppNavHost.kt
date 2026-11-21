@@ -22,7 +22,7 @@ import com.example.painlessprep.ui.theme.PainlessPrepTheme
 import com.example.painlessprep.viewmodel.DatabaseViewModel
 
 @Composable
-fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composable () -> Unit) {
+fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composable (onBackClicked: () -> Unit) -> Unit) {
     val navController = rememberNavController()
 
     // remembers what the user picked on the Welcome screen (null = not picked yet)
@@ -110,7 +110,9 @@ fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composab
         }
 
         composable(Routes.CAMERA) {
-            cameraContent()
+            cameraContent {
+                navController.popBackStack()
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import com.example.painlessprep.model.CalibrationData
 import com.example.painlessprep.model.WindowData
 import com.example.painlessprep.data.CalibrationRepository
 import com.example.painlessprep.data.MeasurementRepository
+import com.example.painlessprep.processor.ProcessorInfo
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint2f
 import org.opencv.core.MatOfPoint3f
@@ -19,11 +20,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var isCalibrating = false
     var isProcessingCalibration = false
 
+    var info: ProcessorInfo = object : ProcessorInfo {
+        override var widthString: String = ""
+        override var heightString: String = ""
+        override var squareConfidence: Double = 0.0
+        override var markerConfidence: Map<Int, Double> = emptyMap()
+        override var width: Double = 0.0
+        override var height: Double = 0.0
+    }
+
     val collectedImagePoints = mutableListOf<MatOfPoint2f>()
     val collectedObjectPoints = mutableListOf<MatOfPoint3f>()
-
-    var currentWidth: Double = 0.0
-    var currentHeight: Double = 0.0
 
     // Private set prevents setting this var outside of this class.
     var savedCalibration: CalibrationData? = calibrationRepo.loadCalibration()
