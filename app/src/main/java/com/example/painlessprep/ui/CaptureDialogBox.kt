@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.painlessprep.data.RoomEntity
 
+//Dialog box when pressing "Capture"
 @Composable
 fun CaptureDialogBox(
     width: Double,
