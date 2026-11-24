@@ -89,20 +89,24 @@ fun CameraScreen(
                         Button(onClick = onCalibrateClicked) {
                             Text("Calibrate")
                         }
-                        Button(onClick = {captured = onCaptureClicked()}) {
+                       Button(onClick = {
+                            capturedWidth = viewModel.info.width
+                            capturedHeight = viewModel.info.height
+                            captured = onCaptureClicked()
+                        }) {
                             Text("Capture")
                         }
 
-                        captured?.let{data ->
+                        captured?.let {
                             CaptureDialogBox(
-                                width = data.width,
-                                height = data.height,
-                                onSave = {windowName ->
-                                    dataVm.addWindow(roomId, windowName, data.width, data.height) {
+                                width = capturedWidth,
+                                height = capturedHeight,
+                                onSave = { windowName ->
+                                    dataVm.addWindow(roomId, windowName, capturedWidth, capturedHeight) {
                                         Toast.makeText(context, "Window added!", Toast.LENGTH_SHORT).show()
                                     }
                                 },
-                                onDismiss = {captured = null}
+                                onDismiss = { captured = null }
                             )
                         }
                     }
