@@ -48,7 +48,7 @@ fun SignInScreen(
         mutableStateOf("")
     }
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(0xFFF5F4EF)),
+        modifier = Modifier.fillMaxSize().background(Color(0xFFF0EEED)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -58,7 +58,7 @@ fun SignInScreen(
             Modifier.offset(y = (-25).dp),
             fontSize=20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF0B5C78))
+            color = Color(0xFF002856))
         /*Sign-in text fields,buttons, and labels*/
         Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             Text(text = "Measure windows.\nOrder sheets cut to fit.",
@@ -74,7 +74,7 @@ fun SignInScreen(
                 email = it
             }, placeholder = { Text("you@example.com", color = Color.Gray) }, modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF0B5C78),
+                    focusedBorderColor = Color(0xFF40683C),
                     unfocusedBorderColor = Color.Gray,
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White),
@@ -91,7 +91,7 @@ fun SignInScreen(
                 )
                 Text(
                     text = "Forgot?", textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { /*TODO:Handle Button Logic*/ }, color = Color(0xFF0B5C78))
+                    modifier = Modifier.clickable { /*TODO:Handle Button Logic*/ }, color = Color(0xFF002856))
             }
             OutlinedTextField(
                 value = password,
@@ -102,7 +102,7 @@ fun SignInScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF0B5C78),
+                    focusedBorderColor = Color(0xFF40683C),
                     unfocusedBorderColor = Color.Gray,
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White),
@@ -116,7 +116,7 @@ fun SignInScreen(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth().height(64.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0B5C78)
+                    containerColor = Color(0xFF002856)
                 )
             ) {
                 Text(text = "Sign in",fontSize = 18.sp)

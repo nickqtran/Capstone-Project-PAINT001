@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.sp
 
 // milestone 3 to do: connect to database (waiting on db)
 // add room creation within project/house
-private val BackgroundColor = Color(0xFFF6F5F1)
-private val PrimaryColor = Color(0xFF0B5D75)
+private val BackgroundColor = Color(0xFFF0EEED)
+private val PrimaryColor = Color(0xFF002856)
 private val TextColor = Color(0xFF202124)
-private val SecondaryColor = Color(0xFF60666F)
+private val SecondaryColor = Color(0xFF636569)
 private val BorderColor = Color(0xFFE2E0D8)
 
 private data class Job(
@@ -377,7 +377,7 @@ private fun StatusBadge(status: String) {
         modifier = Modifier
             .background(
                 if (isDraft) Color(0xFFFBE8DD)
-                else Color(0xFFDDEFF4),
+                else Color(0xFFDBF3FA),
                 RoundedCornerShape(50)
             )
             .padding(horizontal = 12.dp, vertical = 5.dp)
@@ -385,7 +385,7 @@ private fun StatusBadge(status: String) {
         Text(
             text = status,
             color = if (isDraft) Color(0xFF934018)
-            else Color(0xFF10536A),
+            else Color(0xFF002856),
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold
         )

@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // Colors sampled from the mockup
-private val Background = Color(0xFFF4F3EE)
-private val BrandTeal = Color(0xFF155E75)
+private val Background = Color(0xFFF0EEED)
+private val BrandTeal = Color(0xFF002856)
 private val TitleText = Color(0xFF1C1C1E)
-private val BodyText = Color(0xFF5F6368)
+private val BodyText = Color(0xFF636569)
 private val CardBorder = Color(0xFFE3E0D8)
-private val IconBox = Color(0xFFE4EEF1)
+private val IconBox = Color(0xFFDBF3FA)
 private val RadioIdle = Color(0xFF9A9A92)
 private val ButtonDisabled = Color(0xFFD9D7CF)
 private val ButtonDisabledText = Color(0xFF4A4A4A)
