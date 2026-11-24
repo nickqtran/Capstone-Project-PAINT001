@@ -27,6 +27,7 @@ import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.JavaCameraView
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.*
+import com.example.painlessprep.ui.theme.PainlessPrepTheme
 
 class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -52,49 +53,56 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         }
 
         setContent {
-            AppNavHost(
-                cameraContent = { onBackClicked, roomId ->
-                    LaunchedEffect(Unit) { checkCameraPermission() }
+            PainlessPrepTheme {
+                AppNavHost(
+                    cameraContent = { onBackClicked, roomId ->
+                        LaunchedEffect(Unit) { checkCameraPermission() }
 
-                    DisposableEffect(Unit) {
-                        onDispose {
-                            cameraView?.disableView()
-                            cameraView = null
+                        DisposableEffect(Unit) {
+                            onDispose {
+                                cameraView?.disableView()
+                                cameraView = null
+                            }
                         }
-                    }
-                    CameraScreen(
-                        viewModel = viewModel,
-                        dataVm = dataVm,
-                        roomId = roomId,
-                        onBackClicked = onBackClicked,
-                        onCalibrateClicked = { promptCalibration() },
-                        onCaptureClicked = { captureMeasurement(viewModel.info.width, viewModel.info.height) },
-                        onInfoClicked = { showInfoCard() },
-                        cameraViewFactory = { context ->
-                            JavaCameraView(context, 0).apply {
-                                layoutParams = ViewGroup.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT,
-                                    ViewGroup.LayoutParams.MATCH_PARENT
+                        CameraScreen(
+                            viewModel = viewModel,
+                            dataVm = dataVm,
+                            roomId = roomId,
+                            onBackClicked = onBackClicked,
+                            onCalibrateClicked = { promptCalibration() },
+                            onCaptureClicked = {
+                                captureMeasurement(
+                                    viewModel.info.width,
+                                    viewModel.info.height
                                 )
-                                visibility = SurfaceView.VISIBLE
-                                setCvCameraViewListener(this@MainActivity)
-                                if (ContextCompat.checkSelfPermission(
-                                        context,
-                                        Manifest.permission.CAMERA
+                            },
+                            onInfoClicked = { showInfoCard() },
+                            cameraViewFactory = { context ->
+                                JavaCameraView(context, 0).apply {
+                                    layoutParams = ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT
                                     )
-                                    == PackageManager.PERMISSION_GRANTED
-                                ) {
-                                    setCameraPermissionGranted()
-                                    enableView()
-                                }
-                            }.also { cameraView = it }
-                        }
-                    )
-                }
-            )
-        }
+                                    visibility = SurfaceView.VISIBLE
+                                    setCvCameraViewListener(this@MainActivity)
+                                    if (ContextCompat.checkSelfPermission(
+                                            context,
+                                            Manifest.permission.CAMERA
+                                        )
+                                        == PackageManager.PERMISSION_GRANTED
+                                    ) {
+                                        setCameraPermissionGranted()
+                                        enableView()
+                                    }
+                                }.also { cameraView = it }
+                            }
+                        )
+                    }
+                )
+            }
 
-        //checkCameraPermission()
+            //checkCameraPermission()
+        }
     }
 
     private fun checkCameraPermission() {

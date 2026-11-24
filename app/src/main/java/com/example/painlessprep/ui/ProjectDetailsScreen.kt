@@ -17,8 +17,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import com.example.painlessprep.viewmodel.DatabaseViewModel
 
-private val PrimaryColor = Color(0xFF0B5D75)
-private val BackgroundColor = Color(0xFFF6F5F1)
+private val PrimaryColor = Color(0xFF002856)
+private val BackgroundColor = Color(0xFFF0EEED)
 
 @Composable
 fun ProjectDetailsScreen(
