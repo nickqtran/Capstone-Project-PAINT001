@@ -16,6 +16,11 @@ We decided to work on the UI elements while refactoring the code because it was 
 </br>
 Other Branches reviewer should checkout: **determine-confidence-of-capture**</br>
 What this branch does is it gives a confidence value that lets users know their Aruco markers are being detected correctly. It will change colors depending on the confidence value/placement of the aruco markers.
+#Milestone 3 Release Notes
+-Created a database to store user data about Houses, Rooms, and Windows </br>
+-Connected the front end to the database </br>
+-Implemented the determining confidence feature </br>
+-Improved the UI further by implementing the colors of the sponsor's brand </br>
 # Group Members
 Ian Hundahl<br/>
 Thomas Nguyen<br/>
