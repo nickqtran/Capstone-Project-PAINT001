@@ -42,8 +42,9 @@ class DatabaseViewModel (application: Application) : AndroidViewModel(applicatio
         DatabaseRepo.deleteRoom(room)
     }
     //Window operations
-    fun addWindow(roomId: Int, windowName: String, width: Double, height: Double) = viewModelScope.launch {
+    fun addWindow(roomId: Int, windowName: String, width: Double, height: Double, onSaved: () -> Unit = {}) = viewModelScope.launch {
         DatabaseRepo.addWindow(roomId, windowName, width, height)
+        onSaved()
     }
 
     fun updateWindow(window: Window) = viewModelScope.launch {

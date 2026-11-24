@@ -8,9 +8,8 @@ package com.example.painlessprep.model
  * @param[height] The height of the given measurement
  */
 data class WindowData(
-    val name : String,
+    val name : String = "",
     val width : Double,
     val height : Double,
-    val amount : Int
 )
 

@@ -24,7 +24,8 @@ private val BackgroundColor = Color(0xFFF0EEED)
 fun ProjectDetailsScreen(
     houseId: Int,
     databaseViewModel: DatabaseViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onAddWindow: (Int) -> Unit
 ) {
     // update and view houses and their related rooms/windows
     val houseFlow = remember(houseId, databaseViewModel) {
@@ -38,11 +39,6 @@ fun ProjectDetailsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var roomName by remember { mutableStateOf("") }
 
-    // store window values
-    var selectedRoomId by remember { mutableStateOf<Int?>(null) }
-    var windowName by remember { mutableStateOf("") }
-    var windowWidth by remember { mutableStateOf("") }
-    var windowHeight by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -195,13 +191,10 @@ fun ProjectDetailsScreen(
                                 }
                             }
 
-                            // add window dialog box
+                            // TODO: connect this part so it passes the room id to camera screen
                             OutlinedButton(
                                 onClick = {
-                                    selectedRoomId = roomData.room.id
-                                    windowName = ""
-                                    windowWidth = ""
-                                    windowHeight = ""
+                                    onAddWindow(roomData.room.id)
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
@@ -295,74 +288,6 @@ fun ProjectDetailsScreen(
         )
     }
 
-    // dialog for adding a window
-    // *dimensions are entered manually for now*
-    if (selectedRoomId != null) {
-        AlertDialog(
-            onDismissRequest = { selectedRoomId = null },
-            title = { Text("Add Window") },
-            text = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = windowName,
-                        onValueChange = { windowName = it },
-                        label = { Text("Window Name") },
-                        singleLine = true
-                    )
-
-                    OutlinedTextField(
-                        value = windowWidth,
-                        onValueChange = { windowWidth = it },
-                        label = { Text("Width") },
-                        singleLine = true
-                    )
-
-                    OutlinedTextField(
-                        value = windowHeight,
-                        onValueChange = { windowHeight = it },
-                        label = { Text("Height") },
-                        singleLine = true
-                    )
-                }
-            },
-            confirmButton = {
-                val width = windowWidth.toDoubleOrNull()
-                val height = windowHeight.toDoubleOrNull()
-
-                TextButton(
-                    enabled = windowName.isNotBlank() &&
-                            width != null && width > 0.0 &&
-                            height != null && height > 0.0,
-                    onClick = {
-                        val roomId = selectedRoomId
-
-                        if (roomId != null &&
-                            width != null &&
-                            height != null
-                        ) {
-                            databaseViewModel.addWindow(
-                                roomId = roomId,
-                                windowName = windowName.trim(),
-                                width = width,
-                                height = height
-                            )
-
-                            selectedRoomId = null
-                        }
-                    }
-                ) {
-                    Text("Save")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { selectedRoomId = null }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
 
     // confirmation dialog for project deletion
     if (showDeleteDialog && project != null) {

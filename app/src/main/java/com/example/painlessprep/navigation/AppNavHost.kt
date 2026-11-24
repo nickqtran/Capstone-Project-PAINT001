@@ -13,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.painlessprep.ui.ProjectDetailsScreen
 import com.example.painlessprep.ui.AccountType
+import com.example.painlessprep.ui.CameraScreen
 import com.example.painlessprep.ui.JobsScreen
 import com.example.painlessprep.ui.SignInScreen
 import com.example.painlessprep.ui.SignupScreen
@@ -22,7 +23,7 @@ import com.example.painlessprep.ui.theme.PainlessPrepTheme
 import com.example.painlessprep.viewmodel.DatabaseViewModel
 
 @Composable
-fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composable (onBackClicked: () -> Unit) -> Unit) {
+fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composable (onBackClicked: () -> Unit, roomId: Int) -> Unit) {
     val navController = rememberNavController()
 
     // remembers what the user picked on the Welcome screen (null = not picked yet)
@@ -105,14 +106,19 @@ fun AppNavHost(dataVm: DatabaseViewModel = viewModel(), cameraContent: @Composab
                         }
                         launchSingleTop = true
                     }
+                },
+                onAddWindow = { roomId ->
+                    navController.navigate(Routes.cameraScreen(roomId))
                 }
             )
         }
 
-        composable(Routes.CAMERA) {
-            cameraContent {
-                navController.popBackStack()
-            }
+        composable(Routes.CAMERA, arguments = listOf(navArgument("roomId") {type = NavType.IntType})) {
+            entry ->
+            cameraContent(
+                {navController.popBackStack()},
+                entry.arguments!!.getInt("roomId")
+            )
         }
     }
 }

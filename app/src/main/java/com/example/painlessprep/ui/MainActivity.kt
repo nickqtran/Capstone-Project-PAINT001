@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import com.example.painlessprep.model.WindowData
 import com.example.painlessprep.processor.OpenCVProcessor
 import com.example.painlessprep.processor.ProcessorInfo
+import com.example.painlessprep.viewmodel.DatabaseViewModel
 import com.example.painlessprep.viewmodel.MainViewModel
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.JavaCameraView
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
 
     private var cameraView: JavaCameraView? = null
     private val viewModel: MainViewModel by viewModels()
+    private val dataVm: DatabaseViewModel by viewModels()
     private val openCVProcessor = OpenCVProcessor()
 
     private val requiredFrames = 30
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         setContent {
             PainlessPrepTheme {
                 AppNavHost(
-                    cameraContent = { onBackClicked ->
+                    cameraContent = { onBackClicked, roomId ->
                         LaunchedEffect(Unit) { checkCameraPermission() }
 
                         DisposableEffect(Unit) {
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                         }
                         CameraScreen(
                             viewModel = viewModel,
+                            dataVm = dataVm,
+                            roomId = roomId,
                             onBackClicked = onBackClicked,
                             onCalibrateClicked = { promptCalibration() },
                             onCaptureClicked = {
@@ -96,9 +100,9 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                     }
                 )
             }
-        }
 
-        //checkCameraPermission()
+            //checkCameraPermission()
+        }
     }
 
     private fun checkCameraPermission() {
@@ -267,46 +271,9 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
         builder.create().show()
     }
 
-    private fun captureMeasurement(widthVal: Double, heightVal: Double) {
-        val layout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-        }
-
-        val textEntry = EditText(this).apply { hint = "Enter Window Name.." }
-        val intEntry = EditText(this).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER
-            hint = "Enter Window Amount Number.."
-        }
-
-        layout.addView(textEntry)
-        layout.addView(intEntry)
-
-        val width32nds = openCVProcessor.decimalTo32nds(widthVal)
-        val height32nds = openCVProcessor.decimalTo32nds(heightVal)
-
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Measurement Details")
-            .setMessage("The following measurement data will be saved: \nWidth: $width32nds ($widthVal)\nHeight: $height32nds ($heightVal)\n")
-            .setView(layout)
-            .setPositiveButton("Confirm") { _, _ ->
-                val name = textEntry.text.toString()
-                val amtEntry = intEntry.text.toString()
-
-                when {
-                    name.isEmpty() && amtEntry.isEmpty() -> Toast.makeText(this, "Measurement name and amount required.", Toast.LENGTH_LONG).show()
-                    name.isEmpty() -> Toast.makeText(this, "Measurement name required.", Toast.LENGTH_LONG).show()
-                    amtEntry.isEmpty() -> Toast.makeText(this, "Window amount required.", Toast.LENGTH_LONG).show()
-                    else -> {
-                        val amount = amtEntry.toInt()
-                        val windowData = WindowData(name, widthVal, heightVal, amount)
-                        viewModel.saveMeasurement(windowData)
-                        Toast.makeText(this, "Measurement '$name' saved!", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-            .setNegativeButton("Cancel") { _, _ ->
-                Toast.makeText(this, "Measurement cancelled, please try again!", Toast.LENGTH_LONG).show()
-            }
-        builder.create().show()
+    private fun captureMeasurement(widthVal: Double, heightVal: Double):WindowData {
+        val width32nds = openCVProcessor.decimalTo32nds(widthVal).toDoubleOrNull() ?: 0.0
+        val height32nds = openCVProcessor.decimalTo32nds(heightVal).toDoubleOrNull() ?: 0.0
+        return WindowData(width = width32nds, height = height32nds)
     }
 }
