@@ -35,6 +35,8 @@ fun CameraScreen(
 ) {
     val rmsValue by viewModel.rmsDisplay.observeAsState(initial = 0.0)
     var captured by remember {mutableStateOf<WindowData?>(null)}
+    var capturedWidth by remember { mutableDoubleStateOf(0.0) }
+    var capturedHeight by remember { mutableDoubleStateOf(0.0) }
     val context = LocalContext.current
 
     Scaffold(
