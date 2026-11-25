@@ -21,6 +21,7 @@ What this branch does is it gives a confidence value that lets users know their 
 -Connected the front end to the database </br>
 -Implemented the determining confidence feature </br>
 -Improved the UI further by implementing the colors of the sponsor's brand </br>
+-Now averages width/height by the last 10 captures</br>
 # Group Members
 Ian Hundahl<br/>
 Thomas Nguyen<br/>
