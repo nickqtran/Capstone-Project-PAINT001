@@ -22,6 +22,7 @@ What this branch does is it gives a confidence value that lets users know their 
 -Implemented the determining confidence feature </br>
 -Improved the UI further by implementing the colors of the sponsor's brand </br>
 -Now averages width/height by the last 10 captures</br>
+We decided to work more on the UI and improving the measuring system so it aligns more with what the sponsors wanted and we had time to fit it in so we completed that work </br>
 # Group Members
 Ian Hundahl<br/>
 Thomas Nguyen<br/>
