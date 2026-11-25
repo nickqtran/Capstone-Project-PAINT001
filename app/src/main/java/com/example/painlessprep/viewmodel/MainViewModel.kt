@@ -20,6 +20,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var isCalibrating = false
     var isProcessingCalibration = false
 
+    var isCapturingMeasurement = true
+
     var info: ProcessorInfo = object : ProcessorInfo {
         override var widthString: String = ""
         override var heightString: String = ""

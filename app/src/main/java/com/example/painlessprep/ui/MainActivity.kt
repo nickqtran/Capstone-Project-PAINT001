@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                     }
                 }
             }
-        } else {
+        } else if (viewModel.isCapturingMeasurement){
                 lastCvProcessTime = currentTime
                 viewModel.info = openCVProcessor.processArucoFrame(gray, rgba, cameraMatrix, distortionCoeffs)
         }
@@ -241,6 +241,7 @@ class MainActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListe
                 viewModel.isCalibrating = true
                 viewModel.collectedObjectPoints.clear()
                 viewModel.collectedImagePoints.clear()
+                openCVProcessor.resetHistory()
                 Toast.makeText(
                     this,
                     "Beginning calibration, please keep a chessboard in camera view and move around!",

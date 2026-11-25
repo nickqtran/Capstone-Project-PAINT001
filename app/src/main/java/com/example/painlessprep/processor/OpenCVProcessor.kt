@@ -34,6 +34,15 @@ class OpenCVProcessor {
 
     private val GOOD_SCALAR = Scalar(0.0, 255.0, 0.0)
 
+    private val widthHistory = ArrayDeque<Double>()
+    private val heightHistory = ArrayDeque<Double>()
+    private val maxHistorySize = 10
+
+    fun resetHistory() {
+        widthHistory.clear()
+        heightHistory.clear()
+    }
+
     fun runCalibration(
         objectPointCast: List<Mat>,
         imagePointCast: List<Mat>,
@@ -339,27 +348,9 @@ class OpenCVProcessor {
                     val rounded = round(markerDistance * 32) / 32
 
                     if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 0)) {
-                        Imgproc.putText(
-                            rgba,
-                            "Height: ${decimalTo32nds(rounded)}",
-                            Point(50.0, 50.0 + (30.0 * lineIndex)),
-                            Imgproc.FONT_HERSHEY_SIMPLEX,
-                            0.8,
-                            Scalar(5.0, 252.0, 244.0),
-                            2
-                        )
                         formatHeight = decimalTo32nds(rounded).toString()
                         height = "%.4f".format(rounded).toDouble()
                     } else if ((id1 == 1 && id2 == 2) || (id1 == 2 && id2 == 1)) {
-                        Imgproc.putText(
-                            rgba,
-                            "Width: ${decimalTo32nds(rounded)}",
-                            Point(50.0, 50.0 + (30.0 * lineIndex)),
-                            Imgproc.FONT_HERSHEY_SIMPLEX,
-                            0.8,
-                            Scalar(5.0, 252.0, 244.0),
-                            2
-                        )
                         formatWidth = decimalTo32nds(rounded).toString()
                         width = "%.4f".format(rounded).toDouble()
                     }
@@ -368,13 +359,56 @@ class OpenCVProcessor {
             }
         }
 
+        if (width > 0.0) {
+            if (widthHistory.size >= maxHistorySize) {
+                widthHistory.removeFirst()
+            }
+            widthHistory.addLast(width)
+        }
+
+        if (height > 0.0) {
+            if (heightHistory.size >= maxHistorySize) {
+                heightHistory.removeFirst()
+            }
+            heightHistory.addLast(height)
+        }
+
+        val avgWidth = if (widthHistory.isNotEmpty()) widthHistory.average() else width
+        val avgHeight = if (heightHistory.isNotEmpty()) heightHistory.average() else height
+
+        val formattedAvgWidth = if (avgWidth > 0.0) decimalTo32nds(avgWidth) else formatWidth
+        val formattedAvgHeight = if (avgHeight > 0.0) decimalTo32nds(avgHeight) else formatHeight
+
+        if (avgHeight > 0.0) {
+            Imgproc.putText(
+                rgba,
+                "Height: ${decimalTo32nds(avgHeight)}",
+                Point(50.0, 50.0),
+                Imgproc.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                Scalar(5.0, 252.0, 244.0),
+                2
+            )
+        }
+        if (avgWidth > 0.0) {
+            Imgproc.putText(
+                rgba,
+                "Width: ${decimalTo32nds(avgWidth)}",
+                Point(50.0, 80.0),
+                Imgproc.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                Scalar(5.0, 252.0, 244.0),
+                2
+            )
+        }
+
         val captureInfo: ProcessorInfo = object: ProcessorInfo {
-            override var widthString: String = formatWidth
-            override var heightString: String = formatHeight
+            override var widthString: String = formattedAvgWidth
+            override var heightString: String = formattedAvgHeight
             override var squareConfidence: Double = squareConfidences
             override var markerConfidence: Map<Int, Double> = markerConfidences
-            override var  width: Double = width
-            override var height: Double = height
+            override var width: Double = avgWidth
+            override var height: Double = avgHeight
         }
         return captureInfo
     }
