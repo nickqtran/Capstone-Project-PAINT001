@@ -92,6 +92,7 @@ fun CameraScreen(
                             Text("Calibrate")
                         }
                        Button(onClick = {
+                            viewModel.isCapturingMeasurement = false
                             capturedWidth = viewModel.info.width
                             capturedHeight = viewModel.info.height
                             captured = onCaptureClicked()
@@ -104,11 +105,15 @@ fun CameraScreen(
                                 width = capturedWidth,
                                 height = capturedHeight,
                                 onSave = { windowName ->
+                                    viewModel.isCapturingMeasurement = false
                                     dataVm.addWindow(roomId, windowName, capturedWidth, capturedHeight) {
                                         Toast.makeText(context, "Window added!", Toast.LENGTH_SHORT).show()
                                     }
                                 },
-                                onDismiss = { captured = null }
+                                onDismiss = {
+                                    captured = null
+                                    viewModel.isCapturingMeasurement = true
+                                }
                             )
                         }
                     }
